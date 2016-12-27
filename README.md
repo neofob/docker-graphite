@@ -1,6 +1,6 @@
 ## Graphite + Carbon
 
-An all-in-one image running graphite and carbon-cache. **Version**: 0.9.12.
+An all-in-one image running graphite and carbon-cache. **Version**: 0.9.15.
 
 This image contains a sensible default configuration of graphite and
 carbon-cache. Starting this container will, by default, bind the the following
@@ -13,13 +13,13 @@ host ports:
 
 With this image, you can get up and running with graphite by simply running:
 
-    docker run -d nickstenning/graphite
+    docker run -d tuan/graphite
 
 If you already have services running on the host on one or more of these ports,
 you may wish to allow docker to assign random ports on the host. You can do this
 easily by running:
 
-    docker run -p 80 -p 2003 -p 2004 -p 7002 -d nickstenning/graphite
+    docker run -p 80 -p 2003 -p 2004 -p 7002 -d tuan/graphite
 
 You can log into the administrative interface of graphite-web (a Django
 application) with the username `admin` and password `admin`. These passwords can
@@ -36,7 +36,7 @@ recommended) you can use docker's data volumes feature. For example, to store
 graphite's metric database at `/data/graphite` on the host, you could use:
 
     docker run -v /data/graphite:/var/lib/graphite/storage/whisper \
-               -d nickstenning/graphite
+               -d tuan/graphite
 
 **N.B.** You will need to run the container with suitable permissions to write
 to the data volume directory. Carbon and the graphite webapp run as `www-data`
@@ -48,6 +48,8 @@ By default, this instance of carbon-cache uses the following retention periods
 resulting in whisper files of approximately 2.5MiB.
 
     10s:8d,1m:31d,10m:1y,1h:5y
+
+**Author:** *Nick Stenning*
 
 For more information, see [the
 repository](https://github.com/nickstenning/dockerfiles/tree/master/graphite).
