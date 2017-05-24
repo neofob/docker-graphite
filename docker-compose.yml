@@ -1,0 +1,29 @@
+version: '2'
+services:
+  graphite:
+    build: .
+    image: ${DOCKER_NAME}:${TAG}
+    hostname: ${CONTAINER_HOSTNAME}
+    ports:
+      - 80:80
+      - 2003:2003
+      - 2003:2003/udp
+      - 2004:2004
+      - 7002:7002
+    volumes:
+      - ${WHISPER_DATA}:/var/lib/graphite/storage/whisper
+      - ${LOG_DIR}:/var/log/supervisor
+      - ${LOG_DIR}/webapp:/var/lib/graphite/storage/log/webapp
+      - ${LOG_DIR}/go-carbon:/var/log/go-carbon
+      - ${CONFIG_DIR}:/conf:ro
+    network_mode: bridge
+    container_name: ${NAME}
+    memswap_limit: -1
+    mem_limit: 16G
+
+# TODO: Refractor these components into seperated containers
+# go-carbon
+# carbon-c-relay
+# webapp-graphite
+# nginx
+# __author__: tuan t. pham

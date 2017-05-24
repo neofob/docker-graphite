@@ -1,0 +1,16 @@
+# Configuration file for where to create symlink to *.conf
+# /SOURCE/FILE /DEST/DIR
+# Example:
+# /conf/etc/carbon-c-relay/carbon-c-relay.conf /etc/carbon-c-relay
+# __author__: tuan t. pham
+
+# config files in /etc
+/conf/etc/carbon-c-relay/carbon-c-relay.conf /etc/carbon-c-relay
+/conf/etc/nginx/nginx.conf /etc/nginx
+/conf/etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d
+
+# config files for graphite stack
+/conf/graphite/*.conf /var/lib/graphite/conf
+
+# go-carbon config
+/conf/etc/go-carbon/go-carbon.conf /etc/go-carbon
