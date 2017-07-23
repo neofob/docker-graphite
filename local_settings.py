@@ -5,6 +5,10 @@
 
 # Set your local timezone (django will try to figure this out automatically)
 TIME_ZONE = 'UTC'
+GRAPHITE_ROOT = '/var/lib/graphite'
+
+# CARBON_LINK, default is 127.0.0.1:7002
+# CARBONLINK_HOSTS = ['127.0.0.1:7002']
 
 # Setting MEMCACHE_HOSTS to be empty will turn off use of memcached entirely
 #MEMCACHE_HOSTS = ['127.0.0.1:11211']
@@ -33,10 +37,13 @@ TIME_ZONE = 'UTC'
 #LDAP_BASE_PASS = "readonly_account_password"
 #LDAP_USER_QUERY = "(username=%s)"  #For Active Directory use "(sAMAccountName=%s)"
 
-# If sqlite won't cut it, configure your real database here (don't forget to run manage.py syncdb!)
-#DATABASE_ENGINE = 'mysql' # or 'postgres'
-#DATABASE_NAME = 'graphite'
-#DATABASE_USER = 'graphite'
-#DATABASE_PASSWORD = 'graphite-is-awesome'
-#DATABASE_HOST = 'mysql.mycompany.com'
-#DATABASE_PORT = '3306'
+DATABASES = {
+    'default': {
+        'NAME': '/var/lib/graphite/storage/graphite.db',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': ''
+    }
+}

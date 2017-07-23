@@ -4,7 +4,7 @@
 #
 
 DOCKER_NAME ?=neofob/graphite
-TAG ?=0.1.1
+TAG ?=0.1.2
 NAME ?=graphite
 
 # hostname to set inside the container
