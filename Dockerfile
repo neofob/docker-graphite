@@ -4,7 +4,7 @@
 # TODO:
 # 1. Replace graphite-web with carbonapi and what not
 # 2. Decompose these components into separated containers
-#	* carbon-c-relay
+#	* carbon-c-relay (See PR #291 @ grobian/carbon-c-relay)
 #	* nginx
 #	* carbonapi/carbonzipper
 #	* go-carbon
@@ -29,35 +29,17 @@ RUN	apt-get -yq update && \
 	pip install --install-option="--prefix=${GRAPHITE_ROOT}" \
 	--install-option="--install-lib=${GRAPHITE_ROOT}/webapp" \
 	graphite-web==${GRAPHITE_WEB_VERSION} && \
-	mkdir -p ${GRAPHITE_ROOT}/storage/whisper && \
-	touch ${GRAPHITE_ROOT}/storage/graphite.db ${GRAPHITE_ROOT}/storage/index && \
-	chown -R www-data ${GRAPHITE_ROOT}/storage && \
-	chmod 0775 ${GRAPHITE_ROOT}/storage ${GRAPHITE_ROOT}/storage/whisper && \
-	chmod 0664 ${GRAPHITE_ROOT}/storage/graphite.db && \
 	wget -q -O /tmp/go-carbon_amd64.deb ${GO_CARBON} && \
 	wget -q -O /tmp/carbon-c-relay_amd64.deb ${CARBON_C_RELAY} && \
-	dpkg --install /tmp/go-carbon_amd64.deb /tmp/carbon-c-relay_amd64.deb
-
-COPY	./local_settings.py /var/lib/graphite/webapp/graphite/local_settings.py
-COPY	./graphite_wsgi.py /var/lib/graphite/webapp/graphite/graphite_wsgi.py
-
-RUN	PYTHONPATH=/var/lib/graphite/webapp django-admin migrate \
-	--settings=graphite.settings --noinput && \
-	cd ${GRAPHITE_ROOT}/webapp && pyclean . && apt-get autoremove -yq && \
+	dpkg --install /tmp/go-carbon_amd64.deb /tmp/carbon-c-relay_amd64.deb && \
+	apt-get autoremove -yq && \
 	apt-get autoclean && rm -rf /var/lib/apt/lists/* /tmp/*
 
+COPY	./local_settings.py ./graphite_wsgi.py /var/lib/graphite/webapp/graphite/
 COPY	./entrypoint.sh /entrypoint.sh
 
 # Nginx
-EXPOSE	80
-# Carbon line receiver port
-EXPOSE	2003
-# Carbon UDP receiver port
-EXPOSE	2003/udp
-# Carbon pickle receiver port
-EXPOSE	2004
-# Carbon cache query port
-EXPOSE	7002
+EXPOSE	80 2003 2003/udp 2004 7002
 
 CMD	["/entrypoint.sh"]
 

@@ -2,6 +2,7 @@
 # __author__: tuan t. pham
 
 CONFIG_FILE=${CONFIG_FILE:=/conf/configuration.lst}
+GRAPHITE_STORAGE=${GRAPHITE_STORAGE:=/var/lib/graphite/storage}
 
 # Create a symlink SRC_DIR DST_DIR
 # Example /conf/etc/carbon-c-relay/carbon-c-relay.conf /etc/carbon-c-relay
@@ -36,19 +37,28 @@ function process_config()
 # whisper could be data volume from host so we need to set the permission
 function set_permission()
 {
-	mkdir -p /var/lib/graphite/storage/log/webapp
-	chown www-data:www-data /var/lib/graphite/storage
-	chown www-data:www-data /var/lib/graphite/storage/{whisper,log}
-	chown www-data:www-data /var/lib/graphite/storage/log/webapp
-	chown www-data:www-data /var/log/supervisor
-	chown www-data:www-data /var/log/go-carbon
+	[ -d $GRAPHITE_STORAGE/log/webapp ] || mkdir -p $GRAPHITE_STORAGE/log/webapp
+	[ -d $GRAPHITE_STORAGE/whisper ] || mkdir -p $GRAPHITE_STORAGE/whisper
+	chown www-data:www-data $GRAPHITE_STORAGE/{whisper,log} \
+		$GRAPHITE_STORAGE/log/webapp $GRAPHITE_STORAGE
 	chmod 755 /var/lib/graphite/storage/{whisper,log}
 
 	# Set the maximum of open file descriptor
 	ulimit -S -n 8192
 }
 
+function init_database()
+{
+	if [ ! -f $GRAPHITE_STORAGE/graphite.db ]; then
+		PYTHONPATH=/var/lib/graphite/webapp django-admin migrate \
+			--settings=graphite.settings --noinput
+		chown www-data:www-data $GRAPHITE_STORAGE/log/webapp/*
+		chown www-data:www-data $GRAPHITE_STORAGE/graphite.db
+	fi
+}
+
 process_config
 set_permission
+init_database
 
 /usr/bin/supervisord

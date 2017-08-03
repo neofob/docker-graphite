@@ -1,16 +1,15 @@
 # Launching docker graphite makes easy
 #
 # __author__: tuan t. pham
-#
 
 DOCKER_NAME ?=neofob/graphite
-TAG ?=0.1.3
+TAG ?=0.1.4
 NAME ?=graphite
 
 # hostname to set inside the container
 CONTAINER_HOSTNAME ?=$(shell hostname)-docker
-WHISPER_DATA ?=$(shell pwd)/whisper_data
-LOG_DIR ?=$(shell pwd)/log
+GRAPHITE_STORAGE ?=$(shell pwd)/graphite_storage
+LOG_DIR ?=$(GRAPHITE_STORAGE)/log
 CONFIG_DIR ?=$(shell pwd)/conf
 HOSTNAME=$(shell hostname)
 
@@ -63,7 +62,7 @@ dump:
 	@echo "DOCKER_NAME=$(DOCKER_NAME)"
 	@echo "TAG=$(TAG)"
 	@echo "NAME=$(NAME)"
-	@echo "WHISPER_DATA=$(WHISPER_DATA)"
+	@echo "GRAPHITE_STORAGE=$(GRAPHITE_STORAGE)"
 	@echo "LOG_DIR=$(LOG_DIR)"
 	@echo "CONTAINER_HOSTNAME=$(CONTAINER_HOSTNAME)"
 	@echo "CONFIG_DIR=$(CONFIG_DIR)"
@@ -72,13 +71,12 @@ pull:
 	@docker pull $(DOCKER_NAME):$(TAG)
 
 run:
-	mkdir -p $(WHISPER_DATA)
+	@mkdir -p $(GRAPHITE_STORAGE)/log
 	@echo "Starting docker $(NAME)"
 	@echo "$(DOCKER_NAME):$(TAG)"
-	@echo "WHISPER_DATA=$(WHISPER_DATA)"
 	@echo "LOG_DIR=$(LOG_DIR)"
 
-	@WHISPER_DATA=$(WHISPER_DATA) LOG_DIR=$(LOG_DIR) \
+	@GRAPHITE_STORAGE=$(GRAPHITE_STORAGE) LOG_DIR=$(LOG_DIR) \
 		DOCKER_NAME=$(DOCKER_NAME) TAG=$(TAG)	 \
 		CONTAINER_HOSTNAME=$(CONTAINER_HOSTNAME) \
 		CONFIG_DIR=$(CONFIG_DIR)		 \
