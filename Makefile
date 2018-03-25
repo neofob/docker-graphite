@@ -3,7 +3,7 @@
 # __author__: tuan t. pham
 
 DOCKER_NAME ?=neofob/graphite
-TAG ?=0.1.4
+TAG ?=0.1.5-rc0
 NAME ?=graphite
 
 # hostname to set inside the container
