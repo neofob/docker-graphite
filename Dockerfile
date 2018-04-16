@@ -16,11 +16,11 @@ LABEL	maintainer "tuan t. pham <tuan@vt.edu>"
 ENV DEBIAN_FRONTEND=noninteractive \
 PKGS="python-ldap python-cairo python-django python-twisted \
 python-django-tagging python-simplejson python-memcache python-pysqlite2 \
-python-tz python-pip gunicorn supervisor nginx-light libffi-dev wget gcc python-dev" \
+python-tz gunicorn supervisor nginx-light libffi-dev wget gcc python-dev" \
 GO_CARBON="https://github.com/lomik/go-carbon/releases/download/v0.12.0/go-carbon_0.12.0_amd64.deb" \
 CARBON_C_RELAY="http://mirrors.kernel.org/ubuntu/pool/universe/c/carbon-c-relay/carbon-c-relay_3.2-1build1_amd64.deb" \
-WHISPER_VERSION="1.0.2" \
-GRAPHITE_WEB_VERSION="1.0.2" \
+WHISPER_VERSION="1.1.3" \
+GRAPHITE_WEB_VERSION="1.1.3" \
 GRAPHITE_ROOT="/var/lib/graphite" \
 SSL_PKG="http://ftp.osuosl.org/pub/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu3_amd64.deb"
 
@@ -28,6 +28,7 @@ RUN	apt-get -yq update && apt-get -yq dist-upgrade && \
 	apt-get -yq install --no-install-recommends ${PKGS} && \
 	wget -q -O /tmp/libssl1.1_amd64.deb ${SSL_PKG} && \
 	dpkg --install /tmp/libssl1.1_amd64.deb && \
+	easy_install pip && \
 	pip install -U pip && \
 	pip install whisper==${WHISPER_VERSION} && \
 	pip install --install-option="--prefix=${GRAPHITE_ROOT}" \
