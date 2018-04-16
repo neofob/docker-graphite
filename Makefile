@@ -24,7 +24,6 @@ help:
 	@echo
 	@echo	"\033[1;31mrun:\033[0m"
 	@echo	"\tRun docker $(DOCKER_NAME):$(TAG) as $(CONTAINER_NAME)"
-	@echo	"\tmake run"
 	@echo
 	@echo	"\033[1;31mdump:\033[0m"
 	@echo	"\tDump environment variables"
