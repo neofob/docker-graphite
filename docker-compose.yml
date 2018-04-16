@@ -2,8 +2,8 @@ version: '2'
 services:
   graphite:
     build: .
-    image: ${DOCKER_NAME}:${TAG}
-    hostname: ${CONTAINER_HOSTNAME}
+    image: $DOCKER_NAME:$TAG
+    hostname: $CONTAINER_HOSTNAME
     ports:
       - 80:80
       - 2003:2003
@@ -11,14 +11,14 @@ services:
       - 2004:2004
       - 7002:7002
     volumes:
-      - ${GRAPHITE_STORAGE}:/var/lib/graphite/storage
-      - ${LOG_DIR}:/var/log/supervisor
-      - ${LOG_DIR}:/var/log/go-carbon
-      - ${CONFIG_DIR}:/conf:ro
+      - $GRAPHITE_STORAGE:/var/lib/graphite/storage
+      - $LOG_DIR:/var/log/supervisor
+      - $LOG_DIR:/var/log/go-carbon
+      - $CONFIG_DIR:/conf:ro
     network_mode: bridge
-    container_name: ${NAME}
+    container_name: $CONTAINER_NAME
     memswap_limit: -1
-    mem_limit: 16G
+    mem_limit: $MEM_LIMIT
 
 # TODO: Refractor these components into seperated containers
 # go-carbon

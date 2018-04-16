@@ -2,28 +2,18 @@
 #
 # __author__: tuan t. pham
 
-DOCKER_NAME ?=neofob/graphite
-TAG ?=0.1.5-rc2
-NAME ?=graphite
-
-# hostname to set inside the container
-CONTAINER_HOSTNAME ?=$(shell hostname)-docker
-GRAPHITE_STORAGE ?=$(shell pwd)/graphite_storage
-LOG_DIR ?=$(GRAPHITE_STORAGE)/log
-CONFIG_DIR ?=$(shell pwd)/conf
-HOSTNAME=$(shell hostname)
+# a hack to use .env file for docker-compose
+include .env
 
 all: docker
 
 docker:
-	@echo "Building docker image $(DOCKER_NAME):$(TAG)"
-	DOCKER_NAME=$(DOCKER_NAME) TAG=$(TAG)	 \
-	CONTAINER_HOSTNAME=$(CONTAINER_HOSTNAME) \
-	NAME=$(NAME) \
-	HOSTNAME=$(HOSTNAME) \
+	@echo "Building docker image"
 	docker-compose build
 
 help:
+	@echo	"A simple Makefile to shortcut of docker-compose commands."
+	@echo	"Edit .env file to customize environment variables"
 	@echo	"\033[1;31mAvailable targets:\033[0m"
 	@echo
 	@echo	"\033[1;31mhelp:\033[0m"
@@ -31,12 +21,10 @@ help:
 	@echo
 	@echo	"\033[1;31mdocker:\033[0m"
 	@echo	"\tBuild the docker from Dockerfile and tag it as $(DOCKER_NAME):$(TAG)"
-	@echo	"\tCustomize the tag DOCKER_NAME=MyName TAG=MyTag make docker"
 	@echo
 	@echo	"\033[1;31mrun:\033[0m"
-	@echo	"\tRun docker $(DOCKER_NAME):$(TAG) as $(NAME)"
-	@echo	"\tWHISPER_DATA=$(WHISPER_DATA)" LOG_DIR=$(LOG_DIR) make run
-	@echo	"\tUse absolute path"
+	@echo	"\tRun docker $(DOCKER_NAME):$(TAG) as $(CONTAINER_NAME)"
+	@echo	"\tmake run"
 	@echo
 	@echo	"\033[1;31mdump:\033[0m"
 	@echo	"\tDump environment variables"
@@ -45,13 +33,13 @@ help:
 	@echo	"\tPull docker $(DOCKER_NAME):$(TAG)"
 	@echo
 	@echo	"\033[1;31mshutdown:\033[0m"
-	@echo	"\tStop and remove container $(NAME)"
+	@echo	"\tStop and remove container $(CONTAINER_NAME)"
 	@echo
 	@echo	"\033[1;31mstop:\033[0m"
-	@echo	"\tStop container $(NAME)"
+	@echo	"\tStop container $(CONTAINER_NAME)"
 	@echo
 	@echo	"\033[1;31mstart:\033[0m"
-	@echo	"\tStart container $(NAME)"
+	@echo	"\tStart container $(CONTAINER_NAME)"
 	@echo
 	@echo	"\033[1;31mclean:\033[0m"
 	@echo	"\tRemove the docker image $(DOCKER_NAME):$(TAG)"
@@ -61,7 +49,7 @@ help:
 dump:
 	@echo "DOCKER_NAME=$(DOCKER_NAME)"
 	@echo "TAG=$(TAG)"
-	@echo "NAME=$(NAME)"
+	@echo "NAME=$(CONTAINER_NAME)"
 	@echo "GRAPHITE_STORAGE=$(GRAPHITE_STORAGE)"
 	@echo "LOG_DIR=$(LOG_DIR)"
 	@echo "CONTAINER_HOSTNAME=$(CONTAINER_HOSTNAME)"
@@ -72,19 +60,10 @@ pull:
 
 run:
 	@mkdir -p $(GRAPHITE_STORAGE)/log
-	@echo "Starting docker $(NAME)"
-	@echo "$(DOCKER_NAME):$(TAG)"
-	@echo "LOG_DIR=$(LOG_DIR)"
+	@echo "Starting docker $(CONTAINER_NAME)"
+	@docker-compose up -d
 
-	@GRAPHITE_STORAGE=$(GRAPHITE_STORAGE) LOG_DIR=$(LOG_DIR) \
-		DOCKER_NAME=$(DOCKER_NAME) TAG=$(TAG)	 \
-		CONTAINER_HOSTNAME=$(CONTAINER_HOSTNAME) \
-		CONFIG_DIR=$(CONFIG_DIR)		 \
-		NAME=$(NAME) \
-		HOSTNAME=$(HOSTNAME) \
-		docker-compose up -d
-
-	@docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(NAME)
+	@docker inspect --format '{{ .NetworkSettings.IPAddress }}' $(CONTAINER_NAME)
 
 shutdown:
 	docker-compose down
