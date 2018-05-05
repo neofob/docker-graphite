@@ -1,7 +1,7 @@
 ## Graphite Monitoring Docker Container
 *`carbon-c-relay` + `go-carbon` + `whisper` + `graphite-web`*
 
-An `All-In-One` image running graphite
+An `All-In-One` docker container that provides `graphite` monitoring service.
 
 Forked from original python-implementation setup:
 https://github.com/nickstenning/docker-graphite
@@ -35,6 +35,7 @@ Default Environment Variable Settings by `.env` file
 | `GRAPHITE_STORAGE`    | `./graphite_storage`|
 | `LOG_DIR`             | `./log`             |
 | `CONFIG_DIR`          | `./conf`            |
+
 With this image, you can get up and running with graphite by simply running:
 ```
   make run
