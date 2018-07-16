@@ -47,18 +47,7 @@ function set_permission()
 	ulimit -S -n 8192
 }
 
-function init_database()
-{
-	if [ ! -f $GRAPHITE_STORAGE/graphite.db ]; then
-		PYTHONPATH=/var/lib/graphite/webapp django-admin migrate \
-			--settings=graphite.settings --noinput
-		chown www-data:www-data $GRAPHITE_STORAGE/log/webapp/*
-		chown www-data:www-data $GRAPHITE_STORAGE/graphite.db
-	fi
-}
-
 process_config
 set_permission
-init_database
 
 /usr/bin/supervisord

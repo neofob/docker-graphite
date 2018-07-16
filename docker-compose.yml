@@ -1,28 +1,61 @@
-version: '2'
+---
+version: '2.2'
+# Pinned at version 2.x to use resource limitation
+
 services:
-  graphite:
-    build: .
-    image: $DOCKER_NAME:$TAG
-    hostname: $CONTAINER_HOSTNAME
+  graphite_web:
+    build:
+      context: graphite_web
+    image: graphite_web:${GRAPHITE_WEB_TAG}
+    hostname: graphite_web
+    container_name: graphite_web
+    volumes:
+      - ${GRAPHITE_STORAGE}:/var/lib/graphite/storage
+    network_mode: bridge
+    restart: unless-stopped
+    command: "-b0.0.0.0:${GRAPHITE_WEB_PORT} -w${GRAPHITE_WEB_W} graphite.graphite_wsgi:application"
+
+  webui:
+    build:
+      context: webui
+    image: webui:${WEBUI_TAG}
+    hostname: webui
+    container_name: webui
     ports:
       - 80:80
+    links:
+      # Docker's quirkiness
+      - graphite_web:graphite_web
+    environment:
+      - NGINX_HOST=${NGINX_HOST}
+      - NGINX_PORT=80
+    depends_on:
+      - graphite_web
+    volumes:
+      - ${CONFIG_DIR}/etc/nginx/nginx.conf:/etc/nginx/nginx.conf
+    network_mode: bridge
+    restart: unless-stopped
+
+  graphite:
+    build: .
+    image: ${DOCKER_NAME}:${TAG}
+    hostname: ${CONTAINER_HOSTNAME}
+    ports:
       - 2003:2003
       - 2003:2003/udp
       - 2004:2004
       - 7002:7002
     volumes:
-      - $GRAPHITE_STORAGE:/var/lib/graphite/storage
-      - $LOG_DIR:/var/log/supervisor
-      - $LOG_DIR:/var/log/go-carbon
-      - $CONFIG_DIR:/conf:ro
-    network_mode: bridge
-    container_name: $CONTAINER_NAME
+      - ${GRAPHITE_STORAGE}:/var/lib/graphite/storage
+      - ${LOG_DIR}:/var/log/supervisor
+      - ${LOG_DIR}:/var/log/go-carbon
+      - ${CONFIG_DIR}:/conf:ro
+    container_name: ${CONTAINER_NAME}
     memswap_limit: -1
-    mem_limit: $MEM_LIMIT
+    mem_limit: ${MEM_LIMIT}
+    network_mode: bridge
 
 # TODO: Refractor these components into seperated containers
 # go-carbon
 # carbon-c-relay
-# webapp-graphite
-# nginx
 # __author__: tuan t. pham
