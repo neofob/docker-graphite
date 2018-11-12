@@ -61,6 +61,9 @@ GRAPHITE_STORAGE=/path/to/host_graphite_storage
 Note: `docker-compose` accepts `./` notation instead of the absolute path in
 `docker-compose.yml` file.
 
+```
+echo "test.bash.stats $RANDOM `date +%s`" | nc graphite.example.com 2003
+```
 
 **N.B.** You will need to run the container with suitable permissions to write
 to the data volume directory. Carbon and the graphite webapp run as `www-data`

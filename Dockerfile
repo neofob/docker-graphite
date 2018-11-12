@@ -4,20 +4,18 @@
 # TODO:
 # 1. Replace graphite-web with carbonapi and what not
 # 2. Decompose these components into separated containers
-#  * carbon-c-relay (See PR #291 @ grobian/carbon-c-relay)
-#  * nginx #WIP
-#  * graphite-web
+#  * carbon-c-relay (See PR #291 @ grobian/carbon-c-relay) # done
+#  * nginx # done
+#  * graphite-web # done
 #  * carbonapi/carbonzipper
-#  * go-carbon
-#  * whisper_data
+#  * go-carbon # this one
 
-FROM  phusion/baseimage:0.10.1
+FROM  phusion/baseimage:0.10.2
 LABEL  maintainer "tuan t. pham <tuan@vt.edu>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
 PKGS="supervisor libffi-dev wget gcc python-dev" \
-GO_CARBON="https://github.com/lomik/go-carbon/releases/download/v0.12.0/go-carbon_0.12.0_amd64.deb" \
-CARBON_C_RELAY="http://mirrors.kernel.org/ubuntu/pool/universe/c/carbon-c-relay/carbon-c-relay_3.2-1build1_amd64.deb" \
+GO_CARBON="https://github.com/lomik/go-carbon/releases/download/v0.13.0/go-carbon_0.13.0_amd64.deb" \
 SSL_PKG="http://ftp.osuosl.org/pub/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4.1_amd64.deb"
 
 RUN  apt-get -yq update && apt-get -yq dist-upgrade && \
@@ -25,15 +23,13 @@ RUN  apt-get -yq update && apt-get -yq dist-upgrade && \
   wget -q -O /tmp/libssl1.1_amd64.deb ${SSL_PKG} && \
   dpkg --install /tmp/libssl1.1_amd64.deb && \
   wget -q -O /tmp/go-carbon_amd64.deb ${GO_CARBON} && \
-  wget -q -O /tmp/carbon-c-relay_amd64.deb ${CARBON_C_RELAY} && \
-  dpkg --install /tmp/go-carbon_amd64.deb /tmp/carbon-c-relay_amd64.deb && \
+  dpkg --install /tmp/go-carbon_amd64.deb && \
   apt-get autoremove -yq && \
   apt-get autoclean && rm -rf /var/lib/apt/lists/* /tmp/*
 
 COPY  ./entrypoint.sh /entrypoint.sh
 
-EXPOSE  2003 2003/udp 2004 7002 8000
+EXPOSE  2004 7002 8000
 
-CMD  ["/entrypoint.sh"]
-
+ENTRYPOINT ["/sbin/my_init", "--", "/entrypoint.sh"]
 # vim:ts=2:noet:expandtab

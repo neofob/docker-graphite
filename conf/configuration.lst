@@ -5,8 +5,6 @@
 # __author__: tuan t. pham
 
 # config files in /etc
-/conf/etc/carbon-c-relay/carbon-c-relay.conf /etc/carbon-c-relay
-/conf/etc/nginx/nginx.conf /etc/nginx
 /conf/etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d
 
 # config files for graphite stack

@@ -1,5 +1,5 @@
 # graphite-web daemon
-FROM  phusion/baseimage:0.10.1
+FROM  phusion/baseimage:0.10.2
 LABEL maintainer "tuan t. pham <tuan at vt dot edu>"
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -7,8 +7,8 @@ PKGS="python-ldap python-cairo python-django python-twisted \
 python-django-tagging python-simplejson python-memcache python-pysqlite2 \
 python-tz gunicorn libffi-dev gcc wget python-dev" \
 PYTHONPATH="/var/lib/graphite/webapp" \
-WHISPER_VERSION="1.1.3" \
-GRAPHITE_WEB_VERSION="1.1.3" \
+WHISPER_VERSION="1.1.4" \
+GRAPHITE_WEB_VERSION="1.1.4" \
 GRAPHITE_ROOT="/var/lib/graphite" \
 SSL_PKG="http://ftp.osuosl.org/pub/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4.1_amd64.deb"
 

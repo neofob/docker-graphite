@@ -9,7 +9,7 @@ services:
   graphite_web:
     build:
       context: graphite_web
-    image: graphite_web:${GRAPHITE_WEB_TAG}
+    image: neofob/graphite_web:${GRAPHITE_WEB_TAG}
     hostname: graphite_web
     container_name: graphite_web
     volumes:
@@ -27,7 +27,7 @@ services:
   webui:
     build:
       context: webui
-    image: webui:${WEBUI_TAG}
+    image: neofob/graphite_webui:${WEBUI_TAG}
     hostname: webui
     container_name: webui
     ports:
@@ -48,26 +48,48 @@ services:
     memswap_limit: -1
     mem_limit: ${WEBUI_MEM}
 
-  graphite:
-    build: .
-    image: ${DOCKER_NAME}:${TAG}
-    hostname: graphite-docker
+  relay:
+    build:
+      context: relay
+      args:
+        VERSION: ${RELAY_VERSION}
+    image: neofob/relay:${RELAY_VERSION}
+    hostname: relay
+    container_name: relay
+    links:
+      - graphite:graphite
     ports:
       - 2003:2003
-      - 2003:2003/udp
+    volumes:
+      - ${CONFIG_DIR}/etc/carbon-c-relay/carbon-c-relay.conf:/etc/carbon-c-relay/carbon-c-relay.conf:ro
+    restart: unless-stopped
+    networks:
+      - graphite_net
+    command:
+      - "-f"
+      - "/etc/carbon-c-relay/carbon-c-relay.conf"
+      - "-w"
+      - "${RELAY_WORKER}"
+
+  graphite:
+    build: .
+    image: neofob/go-carbon:${GO_TAG}
+    hostname: graphite-docker
+    ports:
       - 2004:2004
       - 7002:7002
+    #  - 2013:2013
     volumes:
       - ${GRAPHITE_STORAGE}:/var/lib/graphite/storage
       - ${LOG_DIR}:/var/log/supervisor
       - ${LOG_DIR}:/var/log/go-carbon
       - ${CONFIG_DIR}:/conf:ro
+    restart: unless-stopped
     container_name: graphite
     networks:
       - graphite_net
     memswap_limit: -1
     mem_limit: ${GRAPHITE_MEM}
-
 
 # TODO: Refractor these components into seperated containers
 # go-carbon
