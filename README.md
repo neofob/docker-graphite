@@ -1,7 +1,8 @@
-## Graphite Monitoring Docker Container
-*`carbon-c-relay` + `go-carbon` + `whisper` + `graphite-web`*
+Graphite Monitoring Docker Container Stack
+==========================================
+*`carbon-c-relay` + `go-carbon` + `graphite_webui` + `graphite_web`*
 
-An `All-In-One` docker container that provides `graphite` monitoring service.
+An `All-In-One` docker container stack that provides `graphite` monitoring service.
 
 Forked from original python-implementation setup:
 https://github.com/nickstenning/docker-graphite
@@ -10,7 +11,6 @@ https://github.com/nickstenning/docker-graphite
 Required packages
 =================
   * `Docker`
-  * `Make`
   * `docker-compose`
 
 This image contains a sensible default configuration of graphite and
@@ -22,31 +22,19 @@ host ports:
 - `2004`: the carbon-cache pickle receiver
 - `7002`: the carbon-cache query port (used by the web interface)
 
+Build the docker images
+=======================
+```
+docker-compose build
+```
+
 Default Environment Variable Settings by `.env` file
 ====================================================
-| `Variable Name`       |      `Value`        |
-|:---------------------:|:-------------------:|
-| `DOCKER_NAME`         | `neofob/graphite`   |
-| `TAG`                 | `0.1.5`             |
-| `CONTAINER_HOSTNAME`  | `graphite-docker`   |
-| `CONTAINER_NAME`      | `graphite`          |
-| `MEM_LIMIT`           | `16G`               |
-|`=====================`|`===================`|
-| `GRAPHITE_STORAGE`    | `./graphite_storage`|
-| `LOG_DIR`             | `./log`             |
-| `CONFIG_DIR`          | `./conf`            |
-
-With this image, you can get up and running with graphite by simply running:
-```
-  make run
-```
+See [`default_settings.env`](./default_settings.env)
 
 You can log into the administrative interface of graphite-web (a Django
 application) with the username `admin` and password `admin`. These passwords can
 be changed through the web interface.
-
-**N.B.** Please be aware that by default docker will make the exposed ports
-accessible from anywhere if the host firewall is unconfigured.
 
 ### Data volumes
 
@@ -61,6 +49,8 @@ GRAPHITE_STORAGE=/path/to/host_graphite_storage
 Note: `docker-compose` accepts `./` notation instead of the absolute path in
 `docker-compose.yml` file.
 
+Testing metrics
+===============
 ```
 echo "test.bash.stats $RANDOM `date +%s`" | nc graphite.example.com 2003
 ```
